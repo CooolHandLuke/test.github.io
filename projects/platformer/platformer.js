@@ -15,54 +15,68 @@ $(function () {
       //start game
       setInterval(main, 1000 / frameRate);
     }
+
     // Create walls - do not delete or modify this code
-    createPlatform(-50, -50, canvas.width + 100, 50); //top
-    createPlatform(-50, canvas.height - 10, canvas.width + 100, 200); //right
-    createPlatform(-50, -50, 50, canvas.height + 500); //bottom
-    createPlatform(canvas.width, -50, 50, canvas.height + 100);
+    createPlatform(-50, -50, canvas.width + 100, 50); // top wall
+    createPlatform(-50, canvas.height - 10, canvas.width + 100, 200, "navy"); // bottom wall
+    createPlatform(-50, -50, 50, canvas.height + 500); // left wall
+    createPlatform(canvas.width, -50, 50, canvas.height + 100); // right wall
 
-    /**
-     * Uncomment the drawGrid() function call below to add a "grid" to your platformer game's screen
-     * The grid will place both horizontal and vertical platforms incremented 100 pixels apart
-     * This can help you determine specific x any y values throughout the game
-     * Comment the function call out to remove the grid
-     */
+    //////////////////////////////////
+    // ONLY CHANGE BELOW THIS POINT //
+    //////////////////////////////////
 
-    // drawGrid();
+    // TODO 1 - Enable the Grid
+    toggleGrid();
 
-    /////////////////////////////////////////////////
-    //////////ONLY CHANGE BELOW THIS POINT///////////
-    /////////////////////////////////////////////////
+    // TODO 2 - Create Platforms
+    createPlatform(120, 0, 30, 600, "black");
+    createPlatform(300, 625, 150, 15, "rgb(229, 102, 6)");
+    createPlatform(150, 505, 150, 15, "rgb(229, 102, 6)");
+    createPlatform(300, 375, 150, 15, "rgb(229, 102, 6)");
+    createPlatform(150, 245, 150, 15, "rgb(229, 102, 6)");
+    createPlatform(580, 200, 925, 45, "rgb(7, 98, 60)");
+    createPlatform(610, 490, 895, 45, "rgb(7, 98, 60)");
 
-    // TODO 1
-    // Create platforms
-    // You must decide the x position, y position, width, and height of the platforms
-    // example usage: createPlatform(x,y,width,height)
+    // TODO 3 - Create Collectables
+    var collectableCount = 0;
+    while (collectableCount < 100) {
+      var x = Math.floor(Math.random() * (canvas.width - 50)) + 25;
+      var y = Math.floor(Math.random() * (canvas.height - 50)) + 25;
+      var overlapsPlatform = false;
+      for (var j = 0; j < platforms.length; j++) {
+        var p = platforms[j];
+        if (
+          x + collectableWidth > p.x &&
+          x < p.x + p.width &&
+          y + collectableHeight > p.y &&
+          y < p.y + p.height
+        ) {
+          overlapsPlatform = true;
+          break;
+        }
+      }
+      if (!overlapsPlatform) {
+        createCollectable("max", x, y);
+        collectableCount++;
+      }
+    }
 
+    // TODO 4 - Create Cannons
+    for (var i = 0; i < 6; i++) {
+      var x = Math.floor(Math.random() * (canvas.width - 50)) + 25;
+      var y = Math.floor(Math.random() * (canvas.height - 50)) + 25;
+      var sides = ["top", "bottom", "left", "right"];
+      var side = sides[Math.floor(Math.random() * sides.length)];
+      if (side === "top") createCannon("top", x, 1000);
+      else if (side === "bottom") createCannon("bottom", x, 1000);
+      else if (side === "left") createCannon("left", x, 1000);
+      else if (side === "right") createCannon(side, x, 1000);
+    }
 
-
-    
-    // TODO 2
-    // Create collectables
-    // You must decide on the collectable type, the x position, the y position, the gravity, and the bounce strength
-    // Your collectable choices are 'database' 'diamond' 'grace' 'kennedi' 'max' and 'steve'; more can be added if you wish
-    // example usage: createCollectable(type, x, y, gravity, bounce)
-
-
-
-    
-    // TODO 3
-    // Create cannons
-    // You must decide the wall you want the cannon on, the position on the wall, and the time between shots in milliseconds
-    // Your wall choices are: 'top' 'left' 'right' and 'bottom'
-    // example usage: createCannon(side, position, delay, width, height)
-
-
-
-    
-    /////////////////////////////////////////////////
-    //////////ONLY CHANGE ABOVE THIS POINT///////////
-    /////////////////////////////////////////////////
+    //////////////////////////////////
+    // ONLY CHANGE ABOVE THIS POINT //
+    //////////////////////////////////
   }
 
   registerSetup(setup);
